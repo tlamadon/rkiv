@@ -17,7 +17,7 @@ rkiv.new <- function(default_location) {
 #' add a location
 #' @export
 rkiv.addloc <- function(rk,name,path,global=T) {
-  rk$locations[[name]] = list(name=name,global=global)
+  rk$locations[[name]] = list(name=name,global=global,path=path)
   return(rk)
 }
 
@@ -154,11 +154,11 @@ rkiv.test <- function() {
   rk = rkiv.put(rk,rs,m)
 
 
-  # syntax with implicit path!
-  rs = rkiv.start("norm_draws")
+  # ---- syntax with implicit path! ----
+  rs = rkiv0.start("norm_draws")
   rs$info = "random draws from a normal distribution"
   X = rnorm(1000)
-  rkiv.put(rs,X)
+  rkiv0.put(rs,X)
 
 
 
