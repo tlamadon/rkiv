@@ -3,7 +3,7 @@
 rkiv.init <- function(path_to_config = "./rkiv.conf",default_location="./") {
   cfg = rkiv.new(default_location)
   cfg$path_to_config = path_to_config
-  write_json(cfg, path_to_config)
+  write_json(cfg, path_to_config,simplifyVector=TRUE)
 }
 
 #' Create a new configuration
@@ -26,7 +26,7 @@ rkiv <- function(path_to_config = "./rkiv.conf") {
 
   # check if config exists, otherwise create it
   if (file.exists(path_to_config)) {
-    cfg = read_json(path_to_config)
+    cfg = read_json(path_to_config,simplifyVector=TRUE)
   } else {
     flog.warn("config file does not exists, creating it at %s",path_to_config)
   }
@@ -40,7 +40,7 @@ rkiv <- function(path_to_config = "./rkiv.conf") {
 #' @export
 print.rkiv <- function(rk) {
   for (nn in names(rk$resources)) {
-    cat(sprintf("%s [%ik] - %s - %2i deps\n",nn,round(rk$resources[[nn]]$fsize[[1]]/1000),rk$resources[[nn]]$info,length(rk$resources[[nn]]$dep)))
+    cat(sprintf("%s [%ik @ %s] - %s - %2i deps\n",nn,round(rk$resources[[nn]]$fsize[[1]]/1000),rk$resources[[nn]]$location,rk$resources[[nn]]$info,length(rk$resources[[nn]]$dep)))
   }
 }
 
@@ -117,11 +117,13 @@ rkiv.put <- function(rk,rs,value) {
   save(value,file=res_file_name)
 
   # get the file size
-  rs$fsize = file.size(res_file_name)
-  rs$time_end = Sys.time()
-  rs$checksum = md5sum(res_file_name)
-  rs$tmp = NULL # removing the link to parent
-  rk$resources[[rs$name]]= rs
+  rs2 = copy(rs)
+  rs2$fsize = file.size(res_file_name)
+  rs2$time_end = Sys.time()
+  rs2$checksum = md5sum(res_file_name)
+  rs2$tmp = NULL # removing the link to parent
+  rs2$rkiv = NULL
+  rk$resources[[rs$name]]= rs2
 
   rk2 = copy(rk)
   class(rk2) = "list"
@@ -136,7 +138,6 @@ rkiv.test <- function() {
   # initialize and list
   rkiv.init()
   rk = rkiv()
-  rk
 
   # create some random variables
   rs = rkiv.start(rk,"norm_draws")
@@ -154,22 +155,15 @@ rkiv.test <- function() {
   rk = rkiv.put(rk,rs,m)
 
 
-  # ---- syntax with implicit path! ----
+  # ---- syntax with implicit path! ---- #
   rs = rkiv0.start("norm_draws")
   rs$info = "random draws from a normal distribution"
   X = rnorm(1000)
   rkiv0.put(rs,X)
 
-
-
-  #
-  rs = rkiv.start(rk,"norm_draws")
-  set.seed(rkiv.getseed(rs,"norm_draws"))
-
+  rs = rkiv0.start("norm_draws2")
+  rs$info = "random draws from a normal distribution"
   X = rnorm(1000)
-
-  rk = rkiv.update(rk,rs,X)
-
-
+  rkiv0.put(rs,X)
 
 }

@@ -26,3 +26,7 @@ rkiv0.put <- function(...) rkiv.put(rkiv0.cfg(),...)
 #' start a resoource at default location
 #' @export
 rkiv0.load <- function(...) rkiv.load(rkiv0.cfg(),...)
+
+#' start a resoource at default location
+#' @export
+rkiv0.list <- function(...) rkiv0.cfg()
