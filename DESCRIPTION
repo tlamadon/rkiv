@@ -10,8 +10,8 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Depends:
-  stringr,
-  futile.logger,
-  jsonlite,
-  tools
-RoxygenNote: 6.0.1
+    stringr,
+    futile.logger,
+    jsonlite,
+    tools
+RoxygenNote: 5.0.1
