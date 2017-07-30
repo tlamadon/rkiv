@@ -108,7 +108,7 @@ rkiv.adddep <-function(rs,dname) {
 }
 
 # returns a resource
-rkiv.start <-function(rk,res_name) {
+rkiv.start <-function(rk,res_name,...) {
 
   # get the resource
   res = rkiv.getres(rk,res_name)
@@ -119,6 +119,23 @@ rkiv.start <-function(rk,res_name) {
 
   # append available dep @fixme, it should be only the resources available here
   res$tmp = list( dep_available = names(rk$resources))
+
+  # append info and location if given
+  nn=list(...)
+
+  if ("location" %in% names(nn)) {
+    res$location = nn$location
+  }
+
+  if ("info" %in% names(nn)) {
+    res$info = nn$info
+  }
+
+  if ("deps" %in% names(nn)) {
+    for ( dname in nn$deps) {
+      rkiv.adddep(res,dname)
+    }
+  }
 
   return(res)
 }
