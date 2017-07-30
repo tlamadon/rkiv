@@ -21,18 +21,33 @@ rkiv.addloc <- function(rk,name,path,global=T) {
   return(rk)
 }
 
-#' Internal function which recovers the description file
-rkiv <- function(path_to_config = "./rkiv.conf") {
+#' Internal function which recovers the description file. Can also be used to list
+#' the current content of the rkiv
+#'
+#' @exprot
+rkiv <- function(path_to_config = "./", config_file_name= "rkiv.conf") {
+
+  file_full = file.path(path_to_config, "", config_file_name)
 
   # check if config exists, otherwise create it
-  if (file.exists(path_to_config)) {
-    cfg = read_json(path_to_config,simplifyVector=TRUE)
+  if (file.exists(file_full)) {
+    flog.info("trying to load %s",file_full)
+    cfg = read_json(file_full,simplifyVector=TRUE)
+
+  # try to find proj home
+  } else if (exists("PROJHOME")) {
+    path_to_config = get("PROJHOME")
+    file_full = file.path(PROJHOME, "", config_file_name)
+    flog.info("trying to load %s",file_full)
+    cfg = read_json(file_full,simplifyVector=TRUE)
+
   } else {
-    flog.warn("config file does not exists, creating it at %s",path_to_config)
+    flog.warn("config file does not exists, please create suing rkiv.init")
+    stop()
   }
 
+  cfg$config_root = path_to_config
   class(cfg)="rkiv"
-
   return(cfg)
 }
 
@@ -69,7 +84,8 @@ rkiv.load <- function(rk,name) {
 
   rs = rk$resources[[name]]
 
-  res_filename = sprintf("%s/%s.rkiv",rk$locations[[rs$location]]$path,tolower(rs$name))
+  res_filename = file.path(rk$config_root, rk$locations[[rs$location]]$path , sprintf("%s.rkiv",tolower(rs$name)))
+  #res_filename = sprintf("%s/%s.rkiv",rk$locations[[rs$location]]$path,tolower(rs$name))
   load(res_filename)
 
   return(value)

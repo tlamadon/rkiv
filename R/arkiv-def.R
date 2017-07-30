@@ -17,6 +17,10 @@ rkiv0.start <- function(...) rkiv.start(rkiv0.cfg(),...)
 
 #' start a resoource at default location
 #' @export
+rkiv0.list <- function() rkiv0.cfg()
+
+#' start a resoource at default location
+#' @export
 rkiv0.adddep <- function(...) rkiv.adddep(rkiv0.cfg(), ... )
 
 #' start a resoource at default location
