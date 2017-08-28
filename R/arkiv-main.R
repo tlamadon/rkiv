@@ -3,7 +3,7 @@
 rkiv.init <- function(path_to_config = "./rkiv.conf",default_location="./") {
   cfg = rkiv.new(default_location)
   cfg$path_to_config = path_to_config
-  write_json(cfg, path_to_config,simplifyVector=TRUE)
+  write_json(cfg, path_to_config,simplifyVector=TRUE,pretty=TRUE)
 }
 
 #' Create a new configuration
@@ -160,7 +160,7 @@ rkiv.put <- function(rk,rs,value) {
 
   rk2 = copy(rk)
   class(rk2) = "list"
-  write_json(rk2, rk$path_to_config[[1]])
+  write_json(rk2, rk$path_to_config[[1]], pretty = TRUE)
   return(rk)
 }
 
